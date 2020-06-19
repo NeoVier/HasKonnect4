@@ -1,4 +1,4 @@
-# Connect4
+# HasKonnect4
 
 Implementation of the game [Connect4](https://en.wikipedia.org/wiki/Connect_Four) in Haskell
 
