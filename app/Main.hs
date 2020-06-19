@@ -1,6 +1,7 @@
 module Main where
 
-import Lib
+import           CLI.ConnectCLI
+import           GUI.ConnectGUI
 
 main :: IO ()
-main = someFunc
+main = runGUI

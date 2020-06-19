@@ -1,5 +1,5 @@
-module ConnectCLI
-        (
+module CLI.ConnectCLI
+        ( runCLI
         ) where
 
 import           Data.Char           (isDigit)
@@ -73,8 +73,8 @@ step g = do
                         step initialGame
                 else step (play option g)
 
-main :: IO ()
-main = do
+runCLI :: IO ()
+runCLI = do
         printHelp
         step initialGame
         putStrLn "Game Finished"
