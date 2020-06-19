@@ -6,7 +6,7 @@ getColumn :: Int -> [[a]] -> [a]
 getColumn c = map (!! c)
 
 transpose :: [[a]] -> [[a]]
-transpose m = map (`getColumn` m) [0 .. length m]
+transpose m = map (`getColumn` m) [0 .. length (head m) - 1]
 
 replaceNth :: Int -> a -> [a] -> [a]
 replaceNth n new list
@@ -31,31 +31,40 @@ firstJusts xs
 mainDiagonal :: Int -> Int -> [(Int, Int)]
 mainDiagonal width height = zip [0 .. height - 1] [0 .. width - 1]
 
-secondaryDiagonal :: Int -> Int -> [(Int, Int)]
-secondaryDiagonal width height = zip [height - 1, height - 2 .. 0] [0 .. width - 1]
-
-directionalDiagonals :: [(Int, Int)] -> [[(Int, Int)]]
-directionalDiagonals originalDiagonal =
-        map (filter (\(x, y) -> x >= 0 && x < size && y >= 0 && y < size)) $
-        originalDiagonal :
-        concatMap
-                (\shift ->
-                         [ map (\(x, y) -> (x - shift, y)) originalDiagonal
-                         , map (\(x, y) -> (x + shift, y)) originalDiagonal
-                         ])
-                [1 .. size `div` 2]
+getMainDiagonals :: Int -> Int -> [[(Int, Int)]]
+getMainDiagonals height width =
+        init $
+        filter (not . null) $
+        map (filter (\(line, col) -> line < height && col < width)) $
+        bottomHalf ++ map (map (\(f, s) -> (s, f))) bottomHalf
   where
-    size = length originalDiagonal
+    order = max height width
+    bottomHalf =
+            map (\x -> map (\(f, s) -> (f + order - x, s)) $ mainDiagonal x x)
+                    [1 .. order]
+
+secondaryDiagonal :: Int -> Int -> [(Int, Int)]
+secondaryDiagonal width height =
+        zip [height - 1,height - 2 .. 0] [0 .. width - 1]
+
+getSecondaryDiagonals :: Int -> Int -> [[(Int, Int)]]
+getSecondaryDiagonals height width =
+        init $
+        filter (not . null) $
+        map (filter (\(line, col) -> line < height && col < width)) $
+        topHalf ++ map (map (\(f, s) -> (order - s - 1, order - f - 1))) topHalf
+  where
+    order = max height width
+    topHalf = map (\x -> secondaryDiagonal x x) [1 .. order]
 
 leftToRightDiagonals :: [[a]] -> [[a]]
 leftToRightDiagonals m =
-        map (map (`get2D` m)) $
-        directionalDiagonals (mainDiagonal (length m) (length $ head m))
+        map (map (`get2D` m)) $ getMainDiagonals (length m) (length $ head m)
 
 rightToLeftDiagonals :: [[a]] -> [[a]]
 rightToLeftDiagonals m =
         map (map (`get2D` m)) $
-        directionalDiagonals (secondaryDiagonal (length m) (length $ head m))
+        getSecondaryDiagonals (length m) (length $ head m)
 
 diagonals :: [[a]] -> [[a]]
 diagonals m = leftToRightDiagonals m ++ rightToLeftDiagonals m

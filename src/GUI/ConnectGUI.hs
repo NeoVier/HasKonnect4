@@ -26,8 +26,9 @@ background :: Color
 background = makeColorI 40 42 54 255
 
 eventHandler :: Event -> Game -> Game
-eventHandler (EventKey (MouseButton LeftButton) Up _ (x, _)) g =
-        C4.play clickedCell g
+eventHandler (EventKey (MouseButton LeftButton) Up _ (x, _)) g
+        | clickedCell `elem` availableColumns (gBoard g) = C4.play clickedCell g
+        | otherwise = g
   where
     clickedCell = ceiling $ ((x + screenWidth / 2) / cellWidth) - 1
 eventHandler _ g = g

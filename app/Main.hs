@@ -4,4 +4,4 @@ import           CLI.ConnectCLI
 import           GUI.ConnectGUI
 
 main :: IO ()
-main = runGUI
+main = runCLI

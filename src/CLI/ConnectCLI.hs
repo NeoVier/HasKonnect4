@@ -8,6 +8,7 @@ import           Game.Connect4
 import           System.Console.ANSI
 import qualified System.Console.ANSI as SCA
 import           System.Exit         (exitFailure, exitSuccess)
+import           System.IO
 
 eraseBoard :: Board -> IO ()
 eraseBoard b = do
@@ -35,10 +36,10 @@ printGame g = do
         if isNothing (gWinner g)
                 then putStrLn ""
                 else putStrLn " (WINNER!)"
-        setSGR [SetColor Foreground Vivid White]
-        putStrLn $ unwords $ map show [0 .. length (gBoard g)]
+        setSGR [SetColor Foreground Vivid SCA.White]
+        putStrLn $ unwords $ map show [0 .. length (head $ gBoard g) - 1]
         mapM_ (\p -> mapM_ printPlayer p >> putStrLn "") (gBoard g)
-        setSGR [SetColor Foreground Vivid White]
+        setSGR [SetColor Foreground Vivid SCA.White]
 
 printHelp :: IO ()
 printHelp = do
@@ -66,7 +67,7 @@ getOption allowed = do
 step :: Game -> IO Game
 step g = do
         printGame g
-        option <- getOption [0 .. length (gBoard g)]
+        option <- getOption (availableColumns (gBoard g))
         if option == -1
                 then do
                         eraseBoard (gBoard g)
@@ -75,6 +76,7 @@ step g = do
 
 runCLI :: IO ()
 runCLI = do
+        hSetBuffering stdout NoBuffering
         printHelp
         step initialGame
         putStrLn "Game Finished"

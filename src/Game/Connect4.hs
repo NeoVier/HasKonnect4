@@ -13,7 +13,7 @@ module Game.Connect4
         ) where
 
 import           Data.List  (group)
-import           Data.Maybe (fromJust, isJust, isNothing)
+import           Data.Maybe (catMaybes, fromJust, isJust, isNothing)
 import           Game.Utils
 
 data Player
@@ -36,10 +36,10 @@ data Game = Game
         } deriving (Show)
 
 defaultWidth :: Int
-defaultWidth = 7
+defaultWidth = 6
 
 defaultHeight :: Int
-defaultHeight = 6
+defaultHeight = 7
 
 defaultWinningLength :: Int
 defaultWinningLength = 4
@@ -82,6 +82,15 @@ play col game
             | isNothing winner = cycleData (gPlayer game)
             | otherwise = gPlayer game
 
+zipWithFilter :: (a -> b -> Maybe c) -> [a] -> [b] -> [c]
+zipWithFilter f as bs = catMaybes $ zipWith f as bs
+
 availableColumns :: Board -> [Column]
 availableColumns b =
-        [i | i <- [0 .. length b - 1], any isNothing (transpose b !! i)]
+        zipWithFilter
+                (\col idx ->
+                         if any isNothing col
+                                 then Just idx
+                                 else Nothing)
+                (transpose b)
+                [0 ..]
