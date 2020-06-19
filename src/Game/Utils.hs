@@ -28,11 +28,11 @@ firstJusts xs
   where
     justs = filter isJust xs
 
-mainDiagonal :: Int -> [(Int, Int)]
-mainDiagonal size = [(x, x) | x <- [0 .. size - 1]]
+mainDiagonal :: Int -> Int -> [(Int, Int)]
+mainDiagonal width height = zip [0 .. height - 1] [0 .. width - 1]
 
-secondaryDiagonal :: Int -> [(Int, Int)]
-secondaryDiagonal size = [(size - x - 1, x) | x <- [0 .. size - 1]]
+secondaryDiagonal :: Int -> Int -> [(Int, Int)]
+secondaryDiagonal width height = zip [height - 1, height - 2 .. 0] [0 .. width - 1]
 
 directionalDiagonals :: [(Int, Int)] -> [[(Int, Int)]]
 directionalDiagonals originalDiagonal =
@@ -49,12 +49,13 @@ directionalDiagonals originalDiagonal =
 
 leftToRightDiagonals :: [[a]] -> [[a]]
 leftToRightDiagonals m =
-        map (map (`get2D` m)) $ directionalDiagonals (mainDiagonal (length m))
+        map (map (`get2D` m)) $
+        directionalDiagonals (mainDiagonal (length m) (length $ head m))
 
 rightToLeftDiagonals :: [[a]] -> [[a]]
 rightToLeftDiagonals m =
         map (map (`get2D` m)) $
-        directionalDiagonals (secondaryDiagonal (length m))
+        directionalDiagonals (secondaryDiagonal (length m) (length $ head m))
 
 diagonals :: [[a]] -> [[a]]
 diagonals m = leftToRightDiagonals m ++ rightToLeftDiagonals m

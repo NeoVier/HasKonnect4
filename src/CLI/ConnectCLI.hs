@@ -6,6 +6,7 @@ import           Data.Char           (isDigit)
 import           Data.Maybe          (isNothing)
 import           Game.Connect4
 import           System.Console.ANSI
+import qualified System.Console.ANSI as SCA
 import           System.Exit         (exitFailure, exitSuccess)
 
 eraseBoard :: Board -> IO ()
@@ -17,13 +18,12 @@ showBoard :: Board -> String
 showBoard = unlines . map (unwords . map (maybe "-" show))
 
 printPlayer :: Maybe Player -> IO ()
-printPlayer Nothing = setSGR [SetColor Foreground Vivid White] >> putStr "- "
+printPlayer Nothing =
+        setSGR [SetColor Foreground Vivid SCA.White] >> putStr "- "
 printPlayer (Just Game.Connect4.Red) =
-        setSGR [SetColor Foreground Vivid System.Console.ANSI.Red] >>
-        putStr "R "
+        setSGR [SetColor Foreground Vivid SCA.Red] >> putStr "R "
 printPlayer (Just Game.Connect4.Yellow) =
-        setSGR [SetColor Foreground Vivid System.Console.ANSI.Yellow] >>
-        putStr "Y "
+        setSGR [SetColor Foreground Vivid SCA.Yellow] >> putStr "Y "
 
 printGame :: Game -> IO ()
 printGame g = do

@@ -29,6 +29,7 @@ library
       Game.Connect4
       Game.Utils
       GUI.ConnectGUI
+      GUI.Rendering
   other-modules:
       Paths_Connect4
   hs-source-dirs:
