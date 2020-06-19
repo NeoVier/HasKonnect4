@@ -31,4 +31,5 @@ eventHandler (EventKey (MouseButton LeftButton) Up _ (x, _)) g
         | otherwise = g
   where
     clickedCell = ceiling $ ((x + screenWidth / 2) / cellWidth) - 1
+eventHandler (EventKey (Char 'r') Up _ _) _ = initialGame
 eventHandler _ g = g
